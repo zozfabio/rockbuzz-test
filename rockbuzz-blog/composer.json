@@ -1,0 +1,27 @@
+{
+  "name": "zozfabio/rockbuzz-blog",
+  "description": "RockBuzz Blog",
+  "type": "project",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "zozfabio",
+      "email": "zozfabio@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "RockBuzz\\Blog\\": "src/"
+    }
+  },
+  "require": {
+    "php": ">=7.2",
+    "ext-json": "*",
+    "slim/slim": "^3.12",
+    "monolog/monolog": "^1.24",
+    "league/oauth2-client": "^2.4",
+    "lcobucci/jwt": "^3.2.2",
+    "guzzlehttp/guzzle": "^6.0",
+    "slim/php-view": "^2.2"
+  }
+}

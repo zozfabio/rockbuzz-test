@@ -1,0 +1,53 @@
+version: '3.1'
+services:
+  oauth2-server-database:
+    build:
+      context: rockbuzz-oauth2-server
+      dockerfile: database.docker
+  oauth2-server-app:
+    build:
+      context: rockbuzz-oauth2-server
+      dockerfile: app.docker
+    depends_on:
+      - oauth2-server-database
+    volumes:
+      - "./rockbuzz-oauth2-server:/usr/src/app"
+    ports:
+      - "8000:8000"
+  post-api-database:
+    build:
+      context: rockbuzz-post-api
+      dockerfile: database.docker
+    ports:
+      - "3306:3306"
+  post-api-app:
+    build:
+      context: rockbuzz-post-api
+      dockerfile: app.docker
+    depends_on:
+      - post-api-database
+    volumes:
+      - "./rockbuzz-post-api:/usr/src/app"
+    ports:
+      - "8001:8000"
+  blog-app:
+    build:
+      context: rockbuzz-blog
+      dockerfile: app.docker
+    depends_on:
+      - oauth2-server-app
+      - post-api-app
+    volumes:
+      - "./rockbuzz-blog:/usr/src/app"
+    ports:
+      - "8002:8000"
+  test:
+    image: postman/newman:4.4.0-alpine
+    entrypoint: newman run -e test.postman_environment.json RockBuzz.postman_collection.json
+    depends_on:
+      - oauth2-server-app
+      - post-api-app
+      - blog-app
+    volumes:
+      - "./rockbuzz-tests:/etc/newman"
+

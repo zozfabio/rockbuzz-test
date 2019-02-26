@@ -1,0 +1,58 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    padding: 20px;
+    font-family: Arial, serif;
+    background: #f1f1f1;
+}
+header.page-head {
+    padding: 30px;
+    margin-bottom: 20px;
+    font-size: 40px;
+    text-align: center;
+    background: #ffffff;
+}
+footer.page-foot {
+    padding: 20px;
+    text-align: center;
+    background: #ddd;
+}
+
+nav {
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: white;
+}
+
+section.row {
+    padding-right: 20px;
+    display: grid;
+    grid-gap: 20px;
+    grid-template-rows: auto;
+    grid-template-columns: 25% 75%;
+}
+
+section.card {
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: white;
+}
+section h3 {
+    margin-bottom: 20px;
+}
+
+article {
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: white;
+    text-align: justify;
+}
+article h3 {
+    margin-bottom: 20px;
+}
+article p {
+    margin-bottom: 20px;
+}

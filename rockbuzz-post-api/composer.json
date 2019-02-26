@@ -1,0 +1,32 @@
+{
+  "name": "zozfabio/rockbuzz-post-api",
+  "description": "RockBuzz Post API",
+  "type": "project",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "zozfabio",
+      "email": "zozfabio@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "RockBuzz\\Post\\": "src/"
+    }
+  },
+  "require": {
+    "php": ">=7.2",
+    "ext-json": "*",
+    "slim/slim": "^3.12",
+    "league/oauth2-server": "^7.3",
+    "doctrine/orm": "^2.6",
+    "monolog/monolog": "^1.24"
+  },
+  "scripts": {
+    "drop-schema": "docker-compose exec -T post-api-app php vendor/bin/doctrine orm:schema-tool:drop --force",
+    "update-schema": "docker-compose exec -T post-api-app php vendor/bin/doctrine orm:schema-tool:update --force",
+
+    "insert-test-data": "docker-compose exec -T post-api-app php vendor/bin/doctrine dbal:import data/insert-test-data.sql",
+    "clear-test-data": "docker-compose exec -T post-api-app php vendor/bin/doctrine dbal:import data/clear-test-data.sql"
+  }
+}
