@@ -28,6 +28,7 @@ return [
                 'posts.author',
                 'posts.tags',
             ],
+            'accessTokenStorePath'    => APP_ROOT . '/var/guzzle/accesstoken.txt',
         ],
         'client'              => [
             'baseUrl' => 'http://post-api-app:8000/api',

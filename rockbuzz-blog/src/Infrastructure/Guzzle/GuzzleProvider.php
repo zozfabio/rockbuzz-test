@@ -11,6 +11,7 @@ namespace RockBuzz\Blog\Infrastructure\Guzzle;
 use GuzzleHttp\Client;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
+use RockBuzz\Blog\Domain\RequestFactory;
 
 class GuzzleProvider implements ServiceProviderInterface {
 
@@ -23,6 +24,10 @@ class GuzzleProvider implements ServiceProviderInterface {
      * @param Container $container A container instance
      */
     public function register(Container $container) {
+        $container[RequestFactory::class] = function(Container $container) {
+            return new RequestFactoryImpl($container);
+        };
+
         $container[Client::class] = function(Container $container) {
             $baseUrl = $container['settings']['client']['baseUrl'];
 

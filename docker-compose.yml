@@ -18,8 +18,6 @@ services:
     build:
       context: rockbuzz-post-api
       dockerfile: database.docker
-    ports:
-      - "3306:3306"
   post-api-app:
     build:
       context: rockbuzz-post-api

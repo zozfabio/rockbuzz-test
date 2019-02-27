@@ -18,9 +18,8 @@ use RockBuzz\Blog\Domain\RequestFactory;
 
 class RequestFactoryImpl implements RequestFactory {
 
-    private $setCookie = null;
-
-    private $request;
+    /** @var Logger */
+    private $logger;
 
     /** @var GenericProvider */
     private $tokenProvider;
@@ -28,52 +27,53 @@ class RequestFactoryImpl implements RequestFactory {
     /** @var array */
     private $tokenScopes;
 
-    /** @var Logger */
-    private $logger;
+    /** @var string */
+    private $tokenStorePath;
 
-    public function __construct(\Slim\Http\Request $request, Container $container) {
-        $this->request = $request;
-
-        $this->tokenProvider = $container[GenericProvider::class];
-        $this->tokenScopes   = $container['settings']['auth']['scope'];
-
-        $this->logger = $container[Logger::class];
+    public function __construct(Container $container) {
+        $this->logger         = $container[Logger::class];
+        $this->tokenProvider  = $container[GenericProvider::class];
+        $this->tokenScopes    = $container['settings']['auth']['scope'];
+        $this->tokenStorePath = $container['settings']['auth']['accessTokenStorePath'];
     }
 
-    public function getSetCookie(): ?string {
-        return $this->setCookie;
-    }
-
-    private function getStoredOrIssueNewToken() {
-        $cookieToken = $this->request->getCookieParam("blog_token");
-        if ($cookieToken) {
-            $this->logger->debug("Stored token: ", [$cookieToken]);
-            $token      = (new Parser())->parse($cookieToken);
-            $now        = (new \DateTime("now"))->getTimestamp();
-            $expiration = $token->getClaim("exp");
-
-            if (($expiration - $now) > 30) {
-                $this->logger->debug("Stored token still valid. " . ($expiration - $now) . " seconds remaining until it's expires.");
-                return $cookieToken;
-            }
+    private function getStoredToken(): string {
+        $dirName = dirname($this->tokenStorePath);
+        if (!is_dir($dirName)) {
+            mkdir($dirName, 0777, true);
         }
+        if (file_exists($this->tokenStorePath)) {
+            return file_get_contents($this->tokenStorePath);
+        }
+        return "";
+    }
+
+    private function issueNewToken(): string {
         try {
-            $this->logger->debug("Let's issue a new token");
             $newToken = $this->tokenProvider->getAccessToken("client_credentials", [
                 "scope" => $this->tokenScopes,
             ]);
 
-            $requestUri  = $this->request->getUri();
-            $requestHost = $requestUri->getHost();
-
-            $this->setCookie = "blog_token={$newToken->getToken()}; Domain={$requestHost}; Max-Age=3600; HttpOnly";
-
-            $this->logger->debug("New token: ", [$newToken->getToken()]);
+            file_put_contents($this->tokenStorePath, $newToken->getToken());
 
             return $newToken->getToken();
         } catch (IdentityProviderException $ex) {
             throw new RepositoryException("Failed to issue a new token on oauth2 service.", 0, $ex);
         }
+    }
+
+    private function getStoredOrIssueNewToken() {
+        $storedToken = $this->getStoredToken();
+        if ($storedToken) {
+            $accessToken = (new Parser())->parse($storedToken);
+            $now         = (new \DateTime("now"))->getTimestamp();
+            $expiration  = $accessToken->getClaim("exp");
+
+            if (($expiration - $now) > 60) {
+                return $storedToken;
+            }
+        }
+        return $this->issueNewToken();
     }
 
     public function getInstance(string $method, string $uri): \GuzzleHttp\Psr7\Request {

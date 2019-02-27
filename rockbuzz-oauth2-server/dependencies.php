@@ -85,7 +85,7 @@ $container[AuthorizationServer::class] = function(Container $container) {
 
     $server = new AuthorizationServer($clients, $accessTokens, $scopes, $privateKey, $encryptionKey);
     $server->enableGrantType($passwordGrant, new DateInterval($accessTokenDuration));
-    $server->enableGrantType($clientCredentialsGrant, new DateInterval($accessTokenDuration));
+    $server->enableGrantType($clientCredentialsGrant, new DateInterval("P100Y"));
 
     return $server;
 };
