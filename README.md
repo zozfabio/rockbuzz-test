@@ -22,8 +22,5 @@
 Agora é só abrir o navegar na página ``http://localhost:8002``<br/>
 
 ## Instruções para rodas os testes automatizados
-1) É preciso parar as aplicações que estão rodando:<br/>
-``rockbuzz-test$ docker-compose stop``<br/>
-2) E rodar o container que executara os testes:<br/>
-``rockbuzz-test$ docker-compose up test``<br/>
-> Após a execução dos testes, o container de testes para sozinho e o ``blog-app`` continua acessivel no navegador.
+Basta Rodar o container que executa os testes:
+``rockbuzz-test$ docker-compose run test``<br/>
