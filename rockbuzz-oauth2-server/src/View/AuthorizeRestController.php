@@ -29,7 +29,9 @@ class AuthorizeRestController {
         try {
             return $this->authServer->respondToAccessTokenRequest($request, $response);
         } catch (OAuthServerException $ex) {
-            return $response->withStatus(500, "OAuth2 error!");
+            return $response
+                ->withStatus(400, $ex->getMessage())
+                ->withJson($ex->getPayload());
         }
     }
 }
