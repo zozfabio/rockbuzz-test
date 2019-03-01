@@ -10,23 +10,20 @@ namespace RockBuzz\Post\Domain\Tag;
 
 use Doctrine\ORM\EntityManager;
 use Pimple\Container;
+use RockBuzz\Post\Domain\Repository;
 
-class TagRepository {
+/**
+ * @method TagEntity[] findAll()
+ * @method TagEntity findOne(int $id)
+ *
+ * @method TagEntity save(TagEntity $entity)
+ * @method TagEntity delete(TagEntity $entity)
+ */
+class TagRepository extends Repository {
 
-    /** @var EntityManager */
-    private $em;
+    protected $entityClass = TagEntity::class;
 
     public function __construct(Container $container) {
-        $this->em = $container[EntityManager::class];
-    }
-
-    /**
-     * @return TagEntity[]
-     */
-    public function findAll() {
-        return $this->em->createQueryBuilder()->select("t")
-            ->from(TagEntity::class, "t")
-            ->getQuery()
-            ->getResult();
+        parent::__construct($container[EntityManager::class]);
     }
 }

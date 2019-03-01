@@ -20,13 +20,15 @@ use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\Table;
 use RockBuzz\Post\Domain\Author\AuthorEntity;
+use RockBuzz\Post\Domain\Identifiable;
+use RockBuzz\Post\Domain\Preconditions;
 use RockBuzz\Post\Domain\Tag\TagEntity;
 
 /**
  * @Entity
  * @Table(name="posts")
  */
-class PostEntity {
+class PostEntity implements Identifiable {
 
     /**
      * @var integer
@@ -69,15 +71,44 @@ class PostEntity {
 
     /**
      * @var ArrayCollection | TagEntity[]
-     * @ManyToMany(targetEntity="RockBuzz\Post\Domain\Tag\TagEntity", cascade={"ALL"}, orphanRemoval=true)
+     * @ManyToMany(targetEntity="RockBuzz\Post\Domain\Tag\TagEntity", cascade={"PERSIST", "MERGE"})
      * @JoinTable(name="post_tag",
      *     joinColumns={@JoinColumn(name="post_id", referencedColumnName="id")},
      *     inverseJoinColumns={@JoinColumn(name="tag_id", referencedColumnName="id")})
      */
     private $tags;
 
-    public function __construct() {
-        $this->tags = new ArrayCollection();
+    private function __construct($id, $title, $slug, $body, $published, $author, $tags) {
+        $this->id        = $id;
+        $this->title     = $title;
+        $this->slug      = $slug;
+        $this->body      = $body;
+        $this->published = $published;
+        $this->author    = $author;
+        $this->tags      = new ArrayCollection($tags);
+    }
+
+    public static function create(?array $values): self {
+        Preconditions::nonEmptyKey($values, "title", "Title is required");
+        Preconditions::nonEmptyKey($values, "slug", "Slug is required");
+        Preconditions::nonEmptyKey($values, "body", "Body is required");
+        Preconditions::nonEmptyKey($values, "author", "Author is required");
+
+        $published = $values["published"] ?: false;
+        $tags      = $values["tags"] ?: [];
+
+        return new self(null, $values["title"], $values["slug"], $values["body"], $published, $values["author"], $tags);
+    }
+
+    public function update(?array $values): self {
+        $title     = $values["title"] ?: $this->title;
+        $slug      = $values["slug"] ?: $this->slug;
+        $body      = $values["body"] ?: $this->body;
+        $published = $values["published"] ?: $this->published;
+        $author    = $values["author"] ?: $this->author;
+        $tags      = $values["tags"] ?: $this->tags;
+
+        return new self($this->id, $title, $slug, $body, $published, $author, $tags);
     }
 
     /**

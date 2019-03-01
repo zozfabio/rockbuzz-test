@@ -23,11 +23,19 @@ class AppProvider implements ServiceProviderInterface {
      * @param Container $container A container instance
      */
     public function register(Container $container) {
+        $container["errorHandler"] = function(Container $container) {
+            return new ErrorHandler();
+        };
+
+        $container[ParamToEntityConverterMiddlewareFactory::class] = function(Container $container) {
+            return new ParamToEntityConverterMiddlewareFactory($container);
+        };
+
         $container[App::class] = function(Container $container) {
             $app = new App($container);
 
-            require_once APP_ROOT . '/routes.php';
             require_once APP_ROOT . '/dependencies.php';
+            require_once APP_ROOT . '/routes.php';
 
             return $app;
         };
