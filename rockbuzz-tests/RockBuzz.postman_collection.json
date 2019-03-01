@@ -73,7 +73,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"grant_type\": \"password\",\n\t\"client_id\": \"rockbuzz-admin\",\n\t\"client_secret\": \"rockbuzzadminsecret\",\n\t\"scope\": \"authors.findAll tags.findAll posts.findAll posts.author posts.tags\",\n\t\"username\": \"user@test.com\",\n\t\"password\": \"userpass\"\n}"
+							"raw": "{\n\t\"grant_type\": \"password\",\n\t\"client_id\": \"rockbuzz-admin\",\n\t\"client_secret\": \"rockbuzzadminsecret\",\n\t\"scope\": \"authors.findAll authors.findOne authors.insert authors.update authors.delete tags.findAll tags.findOne tags.insert tags.update tags.delete posts.findAll posts.findOne posts.author posts.tags posts.insert posts.update posts.delete\",\n\t\"username\": \"user@test.com\",\n\t\"password\": \"userpass\"\n}"
 						},
 						"url": {
 							"raw": "{{rockbuzz-oauth2-base-uri}}/token",
@@ -147,7 +147,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"grant_type\": \"client_credentials\",\n\t\"client_id\": \"rockbuzz-blog\",\n\t\"client_secret\": \"rockbuzzblogsecret\",\n\t\"scope\": \"authors.findAll tags.findAll posts.findAll posts.author posts.tags\"\n}"
+							"raw": "{\n\t\"grant_type\": \"client_credentials\",\n\t\"client_id\": \"rockbuzz-blog\",\n\t\"client_secret\": \"rockbuzzblogsecret\",\n\t\"scope\": \"authors.findAll tags.findAll posts.findAllPublished posts.findOneBySlug posts.author posts.tags\"\n}"
 						},
 						"url": {
 							"raw": "{{rockbuzz-oauth2-base-uri}}/token",
@@ -167,245 +167,1790 @@
 			"name": "Post API",
 			"item": [
 				{
-					"name": "Get all Authors As Blog",
-					"event": [
+					"name": "Blog Client",
+					"item": [
 						{
-							"listen": "test",
-							"script": {
-								"id": "5f72da62-820b-4b4e-ab00-8f75df2cae79",
-								"exec": [
-									"const schema = {",
-									"    \"properties\": {",
-									"        \"id\": {",
-									"            \"type\": \"integer\",",
-									"        },",
-									"        \"name\": {",
-									"            \"type\": \"string\",",
-									"        },",
-									"    },",
-									"    \"required\": [",
-									"        \"id\", ",
-									"        \"name\",",
-									"    ],",
-									"};",
-									"",
-									"pm.test(\"status code is 200\", () => {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"body pass schema verification\", () => {",
-									"    pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;",
-									"});",
-									""
+							"name": "Get all Authors as Blog",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5f72da62-820b-4b4e-ab00-8f75df2cae79",
+										"exec": [
+											"const schema = {",
+											"    \"properties\": {",
+											"        \"id\": {",
+											"            \"type\": \"integer\",",
+											"        },",
+											"        \"name\": {",
+											"            \"type\": \"string\",",
+											"        },",
+											"    },",
+											"    \"required\": [",
+											"        \"id\", ",
+											"        \"name\",",
+											"    ],",
+											"};",
+											"",
+											"pm.test(\"status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"body pass schema verification\", () => {",
+											"    pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{blog_token}}"
+									}
 								],
-								"type": "text/javascript"
-							}
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{rockbuzz-post-api-base-uri}}/api/authors",
+									"host": [
+										"{{rockbuzz-post-api-base-uri}}"
+									],
+									"path": [
+										"api",
+										"authors"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get all Tags as Blog",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "48495f29-f98f-4cda-a1b5-154299d2bb60",
+										"exec": [
+											"const schema = {",
+											"    \"properties\": {",
+											"        \"id\": {",
+											"            \"type\": \"integer\",",
+											"        },",
+											"        \"name\": {",
+											"            \"type\": \"string\",",
+											"        },",
+											"    },",
+											"    \"required\": [",
+											"        \"id\", ",
+											"        \"name\",",
+											"    ],",
+											"};",
+											"",
+											"pm.test(\"status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"body pass schema verification\", () => {",
+											"    pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{blog_token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{rockbuzz-post-api-base-uri}}/api/tags",
+									"host": [
+										"{{rockbuzz-post-api-base-uri}}"
+									],
+									"path": [
+										"api",
+										"tags"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get all published Posts as Blog",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6b6583ff-2c83-4656-9e39-f0fcffe607dd",
+										"exec": [
+											"const schema = {",
+											"    \"properties\": {",
+											"        \"id\": {",
+											"            \"type\": \"integer\",",
+											"        },",
+											"        \"title\": {",
+											"            \"type\": \"string\",",
+											"        },",
+											"        \"slug\": {",
+											"            \"type\": \"string\",",
+											"        },",
+											"        \"body\": {",
+											"            \"type\": \"string\",",
+											"        },",
+											"        \"author\": {",
+											"            \"type\": \"object\",",
+											"            \"properties\": {",
+											"                \"id\": {",
+											"                    \"type\": \"integer\",",
+											"                },",
+											"                \"name\": {",
+											"                    \"type\": \"string\",",
+											"                },",
+											"            },",
+											"            \"required\": [",
+											"                \"id\", ",
+											"                \"name\",",
+											"            ],",
+											"        },",
+											"        \"tags\": {",
+											"            \"type\": \"array\",",
+											"            \"items\": {",
+											"                \"type\": \"object\",",
+											"                \"properties\": {",
+											"                    \"id\": {",
+											"                        \"type\": \"integer\",",
+											"                    },",
+											"                    \"name\": {",
+											"                        \"type\": \"string\",",
+											"                    },",
+											"                },",
+											"                \"required\": [",
+											"                    \"id\", ",
+											"                    \"name\",",
+											"                ],",
+											"            },",
+											"        },",
+											"    },",
+											"    \"required\": [",
+											"        \"id\", ",
+											"        \"title\",",
+											"        \"slug\",",
+											"        \"body\",",
+											"        \"author\",",
+											"        \"tags\",",
+											"    ],",
+											"};",
+											"",
+											"pm.test(\"status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"body pass schema verification\", () => {",
+											"    pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{blog_token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{rockbuzz-post-api-base-uri}}/api/posts/published",
+									"host": [
+										"{{rockbuzz-post-api-base-uri}}"
+									],
+									"path": [
+										"api",
+										"posts",
+										"published"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get a Post by it's Slug as Blog",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6b6583ff-2c83-4656-9e39-f0fcffe607dd",
+										"exec": [
+											"const schema = {",
+											"    \"properties\": {",
+											"        \"id\": {",
+											"            \"type\": \"integer\",",
+											"        },",
+											"        \"title\": {",
+											"            \"type\": \"string\",",
+											"        },",
+											"        \"slug\": {",
+											"            \"type\": \"string\",",
+											"        },",
+											"        \"body\": {",
+											"            \"type\": \"string\",",
+											"        },",
+											"        \"author\": {",
+											"            \"type\": \"object\",",
+											"            \"properties\": {",
+											"                \"id\": {",
+											"                    \"type\": \"integer\",",
+											"                },",
+											"                \"name\": {",
+											"                    \"type\": \"string\",",
+											"                },",
+											"            },",
+											"            \"required\": [",
+											"                \"id\", ",
+											"                \"name\",",
+											"            ],",
+											"        },",
+											"        \"tags\": {",
+											"            \"type\": \"array\",",
+											"            \"items\": {",
+											"                \"type\": \"object\",",
+											"                \"properties\": {",
+											"                    \"id\": {",
+											"                        \"type\": \"integer\",",
+											"                    },",
+											"                    \"name\": {",
+											"                        \"type\": \"string\",",
+											"                    },",
+											"                },",
+											"                \"required\": [",
+											"                    \"id\", ",
+											"                    \"name\",",
+											"                ],",
+											"            },",
+											"        },",
+											"    },",
+											"    \"required\": [",
+											"        \"id\", ",
+											"        \"title\",",
+											"        \"slug\",",
+											"        \"body\",",
+											"        \"author\",",
+											"        \"tags\",",
+											"    ],",
+											"};",
+											"",
+											"pm.test(\"status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"body pass schema verification\", () => {",
+											"    pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{blog_token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{rockbuzz-post-api-base-uri}}/api/posts/slug/tenacios-d-biography",
+									"host": [
+										"{{rockbuzz-post-api-base-uri}}"
+									],
+									"path": [
+										"api",
+										"posts",
+										"slug",
+										"tenacios-d-biography"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get a nonexistent Post by it's Slug as Blog",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6b6583ff-2c83-4656-9e39-f0fcffe607dd",
+										"exec": [
+											"const schema = {",
+											"    \"properties\": {",
+											"        \"message\": {",
+											"            \"type\": \"string\",",
+											"        },",
+											"    },",
+											"    \"required\": [",
+											"        \"message\", ",
+											"    ],",
+											"};",
+											"",
+											"pm.test(\"status code is 404\", () => {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											"",
+											"pm.test(\"body pass schema verification\", () => {",
+											"    const data = pm.response.json();",
+											"    pm.expect(tv4.validate(data, schema)).to.be.true;",
+											"    pm.expect(data.message).to.be.eq(\"Post abc not found!\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"type": "text",
+										"value": "Bearer {{blog_token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{rockbuzz-post-api-base-uri}}/api/posts/slug/abc",
+									"host": [
+										"{{rockbuzz-post-api-base-uri}}"
+									],
+									"path": [
+										"api",
+										"posts",
+										"slug",
+										"abc"
+									]
+								}
+							},
+							"response": []
 						}
 					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"type": "text",
-								"value": "application/json"
-							},
-							{
-								"key": "Authorization",
-								"type": "text",
-								"value": "Bearer {{blog_token}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{rockbuzz-post-api-base-uri}}/authors",
-							"host": [
-								"{{rockbuzz-post-api-base-uri}}"
-							],
-							"path": [
-								"authors"
-							]
-						}
-					},
-					"response": []
+					"_postman_isSubFolder": true
 				},
 				{
-					"name": "Get all Tags As Blog",
-					"event": [
+					"name": "Admin Client",
+					"item": [
 						{
-							"listen": "test",
-							"script": {
-								"id": "48495f29-f98f-4cda-a1b5-154299d2bb60",
-								"exec": [
-									"const schema = {",
-									"    \"properties\": {",
-									"        \"id\": {",
-									"            \"type\": \"integer\",",
-									"        },",
-									"        \"name\": {",
-									"            \"type\": \"string\",",
-									"        },",
-									"    },",
-									"    \"required\": [",
-									"        \"id\", ",
-									"        \"name\",",
-									"    ],",
-									"};",
-									"",
-									"pm.test(\"status code is 200\", () => {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"body pass schema verification\", () => {",
-									"    pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;",
-									"});",
-									""
-								],
-								"type": "text/javascript"
-							}
+							"name": "Authors",
+							"item": [
+								{
+									"name": "Insert Author as Admin",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "6b6583ff-2c83-4656-9e39-f0fcffe607dd",
+												"exec": [
+													"const schema = {",
+													"    \"type\": \"object\",",
+													"    \"properties\": {",
+													"        \"id\": {\"type\": \"integer\"},",
+													"        \"name\": {\"type\": \"string\"},",
+													"    },",
+													"    \"required\": [\"id\", \"name\"]",
+													"};",
+													"",
+													"pm.test(\"status code is 201\", () => {",
+													"    pm.response.to.have.status(201);",
+													"});",
+													"",
+													"pm.test(\"body pass schema verification\", () => {",
+													"    pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;",
+													"});",
+													"",
+													"pm.test(\"location of new author is sent\", () => {",
+													"    pm.response.to.have.header(\"Location\");",
+													"    ",
+													"    const baseUrl    = pm.environment.get(\"rockbuzz-post-api-base-uri\");",
+													"    const token      = pm.environment.get(\"admin_token\");",
+													"    const location   = pm.response.headers.get(\"Location\");",
+													"    const delRequest = {",
+													"        method: \"DELETE\", ",
+													"        url: `${baseUrl}${location}`,",
+													"        header: `Authorization:Bearer ${token}`",
+													"    };",
+													"    pm.sendRequest(delRequest, (err, res) => {",
+													"        pm.test(\"the new author test was removed\", () => {",
+													"            pm.expect(res).to.be.success;",
+													"        });",
+													"    });",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "Authorization",
+												"type": "text",
+												"value": "Bearer {{admin_token}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"name\": \"New Author\"\n}"
+										},
+										"url": {
+											"raw": "{{rockbuzz-post-api-base-uri}}/api/authors",
+											"host": [
+												"{{rockbuzz-post-api-base-uri}}"
+											],
+											"path": [
+												"api",
+												"authors"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get all Authors As Admin",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "6b6583ff-2c83-4656-9e39-f0fcffe607dd",
+												"exec": [
+													"const schema = {",
+													"    \"type\": \"array\",",
+													"    \"items\": {",
+													"        \"type\": \"object\",",
+													"        \"properties\": {",
+													"            \"id\": {\"type\": \"integer\"},",
+													"            \"name\": {\"type\": \"string\"},",
+													"        },",
+													"        \"required\": [\"id\", \"name\"]",
+													"    }",
+													"};",
+													"",
+													"pm.test(\"status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(\"body pass schema verification\", () => {",
+													"    pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"type": "text",
+												"value": "Bearer {{admin_token}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{rockbuzz-post-api-base-uri}}/api/authors",
+											"host": [
+												"{{rockbuzz-post-api-base-uri}}"
+											],
+											"path": [
+												"api",
+												"authors"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get one Author as Admin",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "6b6583ff-2c83-4656-9e39-f0fcffe607dd",
+												"exec": [
+													"const schema = {",
+													"    \"type\": \"object\",",
+													"    \"properties\": {",
+													"        \"id\": {\"type\": \"integer\"},",
+													"        \"name\": {\"type\": \"string\"},",
+													"    },",
+													"    \"required\": [\"id\", \"name\"]",
+													"};",
+													"",
+													"pm.test(\"status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(\"body pass schema verification\", () => {",
+													"    pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"type": "text",
+												"value": "Bearer {{admin_token}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{rockbuzz-post-api-base-uri}}/api/authors/1",
+											"host": [
+												"{{rockbuzz-post-api-base-uri}}"
+											],
+											"path": [
+												"api",
+												"authors",
+												"1"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update Author as Admin",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "6b6583ff-2c83-4656-9e39-f0fcffe607dd",
+												"exec": [
+													"const schema = {",
+													"    \"type\": \"object\",",
+													"    \"properties\": {",
+													"        \"id\": {\"type\": \"integer\"},",
+													"        \"name\": {\"type\": \"string\"},",
+													"    },",
+													"    \"required\": [\"id\", \"name\"]",
+													"};",
+													"",
+													"pm.test(\"status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(\"body pass schema verification\", () => {",
+													"    pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;",
+													"});",
+													"",
+													"pm.test(\"author was updated\", () => {",
+													"    const data = pm.response.json();",
+													"",
+													"    pm.expect(data.name).to.be.eq(\"Updated Author\");",
+													"    ",
+													"});",
+													"",
+													"pm.test(\"delete test tag\", () => {",
+													"    const baseUrl    = pm.environment.get(\"rockbuzz-post-api-base-uri\");",
+													"    const token      = pm.environment.get(\"admin_token\");",
+													"    const location   = pm.globals.get(\"update-test-location\");",
+													"    const delRequest = {",
+													"        method: \"DELETE\", ",
+													"        url: `${baseUrl}${location}`,",
+													"        header: `Authorization:Bearer ${token}`",
+													"    };",
+													"    pm.sendRequest(delRequest, (err, res) => {",
+													"        pm.test(\"the new author test was removed\", () => {",
+													"            pm.expect(res).to.be.success;",
+													"        });",
+													"    });",
+													"});",
+													"",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "eeb1b218-b69c-4184-8189-a96a88ef2169",
+												"exec": [
+													"const baseUrl    = pm.environment.get(\"rockbuzz-post-api-base-uri\");",
+													"const token      = pm.environment.get(\"admin_token\");",
+													"const insRequest = {",
+													"    async: false,",
+													"    method: \"POST\", ",
+													"    url: `${baseUrl}/api/authors`,",
+													"    header: {",
+													"        \"Accept\": \"application/json\",",
+													"        \"Content-Type\": \"application/json\",",
+													"        \"Authorization\": `Bearer ${token}`,",
+													"    },",
+													"    body: {",
+													"        mode: \"raw\",",
+													"        raw: JSON.stringify({",
+													"            \"name\": \"Some Author\"",
+													"        })",
+													"    }",
+													"};",
+													"pm.sendRequest(insRequest, (err, res) => {",
+													"    const location = res.headers.get(\"Location\");",
+													"",
+													"    pm.globals.set(\"update-test-location\", location);",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Accept",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"type": "text",
+												"value": "Bearer {{admin_token}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"name\": \"Updated Author\"\n}"
+										},
+										"url": {
+											"raw": "{{rockbuzz-post-api-base-uri}}{{update-test-location}}",
+											"host": [
+												"{{rockbuzz-post-api-base-uri}}{{update-test-location}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete Author as Admin",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "6b6583ff-2c83-4656-9e39-f0fcffe607dd",
+												"exec": [
+													"pm.test(\"status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "53eec670-9857-42f8-9af0-6bba12ce9ad5",
+												"exec": [
+													"const baseUrl    = pm.environment.get(\"rockbuzz-post-api-base-uri\");",
+													"const token      = pm.environment.get(\"admin_token\");",
+													"const insRequest = {",
+													"    async: false,",
+													"    method: \"POST\", ",
+													"    url: `${baseUrl}/api/authors`,",
+													"    header: {",
+													"        \"Accept\": \"application/json\",",
+													"        \"Content-Type\": \"application/json\",",
+													"        \"Authorization\": `Bearer ${token}`,",
+													"    },",
+													"    body: {",
+													"        mode: \"raw\",",
+													"        raw: JSON.stringify({",
+													"            \"name\": \"Some Author\"",
+													"        })",
+													"    }",
+													"};",
+													"pm.sendRequest(insRequest, (err, res) => {",
+													"    const location = res.headers.get(\"Location\");",
+													"",
+													"    pm.globals.set(\"delete-test-location\", location);",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Accept",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"type": "text",
+												"value": "Bearer {{admin_token}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{rockbuzz-post-api-base-uri}}{{delete-test-location}}",
+											"host": [
+												"{{rockbuzz-post-api-base-uri}}{{delete-test-location}}"
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "Tags",
+							"item": [
+								{
+									"name": "Insert Tag as Admin",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "6b6583ff-2c83-4656-9e39-f0fcffe607dd",
+												"exec": [
+													"const schema = {",
+													"    \"type\": \"object\",",
+													"    \"properties\": {",
+													"        \"id\": {\"type\": \"integer\"},",
+													"        \"name\": {\"type\": \"string\"},",
+													"    },",
+													"    \"required\": [\"id\", \"name\"]",
+													"};",
+													"",
+													"pm.test(\"status code is 201\", () => {",
+													"    pm.response.to.have.status(201);",
+													"});",
+													"",
+													"pm.test(\"body pass schema verification\", () => {",
+													"    pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;",
+													"});",
+													"",
+													"pm.test(\"location of new tag is sent\", () => {",
+													"    pm.response.to.have.header(\"Location\");",
+													"    ",
+													"    const baseUrl    = pm.environment.get(\"rockbuzz-post-api-base-uri\");",
+													"    const token      = pm.environment.get(\"admin_token\");",
+													"    const location   = pm.response.headers.get(\"Location\");",
+													"    const delRequest = {",
+													"        method: \"DELETE\", ",
+													"        url: `${baseUrl}${location}`,",
+													"        header: `Authorization:Bearer ${token}`",
+													"    };",
+													"    pm.sendRequest(delRequest, (err, res) => {",
+													"        pm.test(\"the new tag test was removed\", () => {",
+													"            pm.expect(res).to.be.success;",
+													"        });",
+													"    });",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "Authorization",
+												"type": "text",
+												"value": "Bearer {{admin_token}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"name\": \"New Tag\"\n}"
+										},
+										"url": {
+											"raw": "{{rockbuzz-post-api-base-uri}}/api/tags",
+											"host": [
+												"{{rockbuzz-post-api-base-uri}}"
+											],
+											"path": [
+												"api",
+												"tags"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get all Tags As Admin",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "6b6583ff-2c83-4656-9e39-f0fcffe607dd",
+												"exec": [
+													"const schema = {",
+													"    \"type\": \"array\",",
+													"    \"items\": {",
+													"        \"type\": \"object\",",
+													"        \"properties\": {",
+													"            \"id\": {\"type\": \"integer\"},",
+													"            \"name\": {\"type\": \"string\"},",
+													"        },",
+													"        \"required\": [\"id\", \"name\"]",
+													"    }",
+													"};",
+													"",
+													"pm.test(\"status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(\"body pass schema verification\", () => {",
+													"    pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"type": "text",
+												"value": "Bearer {{admin_token}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{rockbuzz-post-api-base-uri}}/api/tags",
+											"host": [
+												"{{rockbuzz-post-api-base-uri}}"
+											],
+											"path": [
+												"api",
+												"tags"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get one Tag as Admin",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "6b6583ff-2c83-4656-9e39-f0fcffe607dd",
+												"exec": [
+													"const schema = {",
+													"    \"type\": \"object\",",
+													"    \"properties\": {",
+													"        \"id\": {\"type\": \"integer\"},",
+													"        \"name\": {\"type\": \"string\"},",
+													"    },",
+													"    \"required\": [\"id\", \"name\"]",
+													"};",
+													"",
+													"pm.test(\"status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(\"body pass schema verification\", () => {",
+													"    pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"type": "text",
+												"value": "Bearer {{admin_token}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{rockbuzz-post-api-base-uri}}/api/tags/1",
+											"host": [
+												"{{rockbuzz-post-api-base-uri}}"
+											],
+											"path": [
+												"api",
+												"tags",
+												"1"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update Tag as Admin",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "6b6583ff-2c83-4656-9e39-f0fcffe607dd",
+												"exec": [
+													"const schema = {",
+													"    \"type\": \"object\",",
+													"    \"properties\": {",
+													"        \"id\": {\"type\": \"integer\"},",
+													"        \"name\": {\"type\": \"string\"},",
+													"    },",
+													"    \"required\": [\"id\", \"name\"]",
+													"};",
+													"",
+													"pm.test(\"status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(\"body pass schema verification\", () => {",
+													"    pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;",
+													"});",
+													"",
+													"pm.test(\"tag was updated\", () => {",
+													"    const data = pm.response.json();",
+													"",
+													"    pm.expect(data.name).to.be.eq(\"Updated Tag\");",
+													"    ",
+													"});",
+													"",
+													"pm.test(\"delete test tag\", () => {",
+													"    const baseUrl    = pm.environment.get(\"rockbuzz-post-api-base-uri\");",
+													"    const token      = pm.environment.get(\"admin_token\");",
+													"    const location   = pm.globals.get(\"update-test-location\");",
+													"    const delRequest = {",
+													"        method: \"DELETE\", ",
+													"        url: `${baseUrl}${location}`,",
+													"        header: `Authorization:Bearer ${token}`",
+													"    };",
+													"    pm.sendRequest(delRequest, (err, res) => {",
+													"        pm.test(\"the new tag test was removed\", () => {",
+													"            pm.expect(res).to.be.success;",
+													"        });",
+													"    });",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "fd151e82-eec8-4337-8413-ae2d807bec5c",
+												"exec": [
+													"const baseUrl    = pm.environment.get(\"rockbuzz-post-api-base-uri\");",
+													"const token      = pm.environment.get(\"admin_token\");",
+													"const insRequest = {",
+													"    async: false,",
+													"    method: \"POST\", ",
+													"    url: `${baseUrl}/api/tags`,",
+													"    header: {",
+													"        \"Accept\": \"application/json\",",
+													"        \"Content-Type\": \"application/json\",",
+													"        \"Authorization\": `Bearer ${token}`,",
+													"    },",
+													"    body: {",
+													"        mode: \"raw\",",
+													"        raw: JSON.stringify({",
+													"            \"name\": \"Some Tag\"",
+													"        })",
+													"    }",
+													"};",
+													"pm.sendRequest(insRequest, (err, res) => {",
+													"    const location = res.headers.get(\"Location\");",
+													"",
+													"    pm.globals.set(\"update-test-location\", location);",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Accept",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"type": "text",
+												"value": "Bearer {{admin_token}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"name\": \"Updated Tag\"\n}"
+										},
+										"url": {
+											"raw": "{{rockbuzz-post-api-base-uri}}{{update-test-location}}",
+											"host": [
+												"{{rockbuzz-post-api-base-uri}}{{update-test-location}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete Tag as Admin",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "6b6583ff-2c83-4656-9e39-f0fcffe607dd",
+												"exec": [
+													"pm.test(\"status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "3d51d075-cdd9-45dd-a439-2c40244bb8af",
+												"exec": [
+													"const baseUrl    = pm.environment.get(\"rockbuzz-post-api-base-uri\");",
+													"const token      = pm.environment.get(\"admin_token\");",
+													"const insRequest = {",
+													"    async: false,",
+													"    method: \"POST\", ",
+													"    url: `${baseUrl}/api/tags`,",
+													"    header: {",
+													"        \"Accept\": \"application/json\",",
+													"        \"Content-Type\": \"application/json\",",
+													"        \"Authorization\": `Bearer ${token}`,",
+													"    },",
+													"    body: {",
+													"        mode: \"raw\",",
+													"        raw: JSON.stringify({",
+													"            \"name\": \"Some Tag\"",
+													"        })",
+													"    }",
+													"};",
+													"pm.sendRequest(insRequest, (err, res) => {",
+													"    const location = res.headers.get(\"Location\");",
+													"",
+													"    pm.globals.set(\"delete-test-location\", location);",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Accept",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"type": "text",
+												"value": "Bearer {{admin_token}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{rockbuzz-post-api-base-uri}}{{delete-test-location}}",
+											"host": [
+												"{{rockbuzz-post-api-base-uri}}{{delete-test-location}}"
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "Posts",
+							"item": [
+								{
+									"name": "Insert Post as Admin",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "6b6583ff-2c83-4656-9e39-f0fcffe607dd",
+												"exec": [
+													"const schema = {",
+													"    \"properties\": {",
+													"        \"id\": {",
+													"            \"type\": \"integer\",",
+													"        },",
+													"        \"title\": {",
+													"            \"type\": \"string\",",
+													"        },",
+													"        \"slug\": {",
+													"            \"type\": \"string\",",
+													"        },",
+													"        \"body\": {",
+													"            \"type\": \"string\",",
+													"        },",
+													"        \"author\": {",
+													"            \"type\": \"object\",",
+													"            \"properties\": {",
+													"                \"id\": {",
+													"                    \"type\": \"integer\",",
+													"                },",
+													"                \"name\": {",
+													"                    \"type\": \"string\",",
+													"                },",
+													"            },",
+													"            \"required\": [",
+													"                \"id\", ",
+													"                \"name\",",
+													"            ],",
+													"        },",
+													"        \"tags\": {",
+													"            \"type\": \"array\",",
+													"            \"items\": {",
+													"                \"type\": \"object\",",
+													"                \"properties\": {",
+													"                    \"id\": {",
+													"                        \"type\": \"integer\",",
+													"                    },",
+													"                    \"name\": {",
+													"                        \"type\": \"string\",",
+													"                    },",
+													"                },",
+													"                \"required\": [",
+													"                    \"id\", ",
+													"                    \"name\",",
+													"                ],",
+													"            },",
+													"        },",
+													"    },",
+													"    \"required\": [",
+													"        \"id\", ",
+													"        \"title\",",
+													"        \"slug\",",
+													"        \"body\",",
+													"        \"author\",",
+													"        \"tags\",",
+													"    ],",
+													"};",
+													"",
+													"pm.test(\"status code is 201\", () => {",
+													"    pm.response.to.have.status(201);",
+													"});",
+													"",
+													"pm.test(\"body pass schema verification\", () => {",
+													"    pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;",
+													"});",
+													"",
+													"pm.test(\"location of new post is sent\", () => {",
+													"    pm.response.to.have.header(\"Location\");",
+													"",
+													"    const baseUrl    = pm.environment.get(\"rockbuzz-post-api-base-uri\");",
+													"    const token      = pm.environment.get(\"admin_token\");",
+													"    const location   = pm.response.headers.get(\"Location\");",
+													"    const delRequest = {",
+													"        method: \"DELETE\", ",
+													"        url: `${baseUrl}${location}`,",
+													"        header: `Authorization:Bearer ${token}`",
+													"    };",
+													"    pm.sendRequest(delRequest, (err, res) => {",
+													"        pm.test(\"the new post test was removed\", () => {",
+													"            pm.expect(res).to.be.success;",
+													"        });",
+													"    });",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "Authorization",
+												"type": "text",
+												"value": "Bearer {{admin_token}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"title\": \"New Post 5\",\n\t\"slug\": \"new-post-5\",\n\t\"body\": \"This is a new Post.\",\n\t\"author\": 1,\n\t\"tags\": [1, 2]\n}"
+										},
+										"url": {
+											"raw": "{{rockbuzz-post-api-base-uri}}/api/posts",
+											"host": [
+												"{{rockbuzz-post-api-base-uri}}"
+											],
+											"path": [
+												"api",
+												"posts"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get all Posts As Admin",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "6b6583ff-2c83-4656-9e39-f0fcffe607dd",
+												"exec": [
+													"const schema = {",
+													"    \"type\": \"array\",",
+													"    \"items\": {",
+													"        \"type\": \"object\",",
+													"        \"properties\": {",
+													"            \"id\": {\"type\": \"integer\"},",
+													"            \"title\": {\"type\": \"string\"},",
+													"            \"slug\": {\"type\": \"string\"},",
+													"            \"body\": {\"type\": \"string\"},",
+													"            \"author\": {",
+													"                \"type\": \"object\",",
+													"                \"properties\": {",
+													"                    \"id\": {\"type\": \"integer\"},",
+													"                    \"name\": {\"type\": \"string\"},",
+													"                },",
+													"                \"required\": [\"id\", \"name\"],",
+													"            },",
+													"            \"tags\": {",
+													"                \"type\": \"array\",",
+													"                \"items\": {",
+													"                    \"type\": \"object\",",
+													"                    \"properties\": {",
+													"                        \"id\": {\"type\": \"integer\"},",
+													"                        \"name\": {\"type\": \"string\"},",
+													"                    },",
+													"                    \"required\": [\"id\", \"name\"],",
+													"                }",
+													"            }",
+													"        },",
+													"        \"required\": [\"id\", \"title\", \"slug\", \"body\", \"author\", \"tags\"]",
+													"    }",
+													"};",
+													"",
+													"pm.test(\"status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(\"body pass schema verification\", () => {",
+													"    pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"type": "text",
+												"value": "Bearer {{admin_token}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{rockbuzz-post-api-base-uri}}/api/posts",
+											"host": [
+												"{{rockbuzz-post-api-base-uri}}"
+											],
+											"path": [
+												"api",
+												"posts"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get one Post as Admin",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "6b6583ff-2c83-4656-9e39-f0fcffe607dd",
+												"exec": [
+													"const schema = {",
+													"    \"type\": \"object\",",
+													"    \"properties\": {",
+													"        \"id\": {\"type\": \"integer\"},",
+													"        \"title\": {\"type\": \"string\"},",
+													"        \"slug\": {\"type\": \"string\"},",
+													"        \"body\": {\"type\": \"string\"},",
+													"        \"author\": {",
+													"            \"type\": \"object\",",
+													"            \"properties\": {",
+													"                \"id\": {\"type\": \"integer\"},",
+													"                \"name\": {\"type\": \"string\"},",
+													"            },",
+													"            \"required\": [\"id\", \"name\"],",
+													"        },",
+													"        \"tags\": {",
+													"            \"type\": \"array\",",
+													"            \"items\": {",
+													"                \"type\": \"object\",",
+													"                \"properties\": {",
+													"                    \"id\": {\"type\": \"integer\"},",
+													"                    \"name\": {\"type\": \"string\"},",
+													"                },",
+													"                \"required\": [\"id\", \"name\"],",
+													"            },",
+													"        },",
+													"    },",
+													"    \"required\": [\"id\", \"title\", \"slug\", \"body\", \"author\", \"tags\"],",
+													"};",
+													"",
+													"pm.test(\"status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(\"body pass schema verification\", () => {",
+													"    pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"type": "text",
+												"value": "Bearer {{admin_token}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{rockbuzz-post-api-base-uri}}/api/posts/1",
+											"host": [
+												"{{rockbuzz-post-api-base-uri}}"
+											],
+											"path": [
+												"api",
+												"posts",
+												"1"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update Post as Admin",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "6b6583ff-2c83-4656-9e39-f0fcffe607dd",
+												"exec": [
+													"const schema = {",
+													"    \"type\": \"object\",",
+													"    \"properties\": {",
+													"        \"id\": {\"type\": \"integer\"},",
+													"        \"title\": {\"type\": \"string\"},",
+													"        \"slug\": {\"type\": \"string\"},",
+													"        \"body\": {\"type\": \"string\"},",
+													"        \"author\": {",
+													"            \"type\": \"object\",",
+													"            \"properties\": {",
+													"                \"id\": {\"type\": \"integer\"},",
+													"                \"name\": {\"type\": \"string\"},",
+													"            },",
+													"            \"required\": [\"id\", \"name\"],",
+													"        },",
+													"        \"tags\": {",
+													"            \"type\": \"array\",",
+													"            \"items\": {",
+													"                \"type\": \"object\",",
+													"                \"properties\": {",
+													"                    \"id\": {\"type\": \"integer\"},",
+													"                    \"name\": {\"type\": \"string\"},",
+													"                },",
+													"                \"required\": [\"id\", \"name\"],",
+													"            },",
+													"        },",
+													"    },",
+													"    \"required\": [\"id\", \"title\", \"slug\", \"body\", \"author\", \"tags\"],",
+													"};",
+													"",
+													"pm.test(\"status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"pm.test(\"body pass schema verification\", () => {",
+													"    pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;",
+													"});",
+													"",
+													"pm.test(\"post was updated\", () => {",
+													"    const data = pm.response.json();",
+													"",
+													"    pm.expect(data.title).to.be.eq(\"Updated Test Post\");",
+													"    pm.expect(data.slug).to.be.eq(\"updated-test-post\");",
+													"    pm.expect(data.body).to.be.eq(\"This is updated Post.\");",
+													"    pm.expect(data.author.id).to.be.eq(2);",
+													"    pm.expect(data.tags).to.be.an('array').that.is.deep.equal([{id: 2, name: \"Acoustic\"}]);",
+													"});",
+													"",
+													"pm.test(\"delete test tag\", () => {",
+													"    const baseUrl    = pm.environment.get(\"rockbuzz-post-api-base-uri\");",
+													"    const token      = pm.environment.get(\"admin_token\");",
+													"    const location   = pm.globals.get(\"update-test-location\");",
+													"    const delRequest = {",
+													"        method: \"DELETE\", ",
+													"        url: `${baseUrl}${location}`,",
+													"        header: `Authorization:Bearer ${token}`",
+													"    };",
+													"    pm.sendRequest(delRequest, (err, res) => {",
+													"        pm.test(\"the new author test was removed\", () => {",
+													"            pm.expect(res).to.be.success;",
+													"        });",
+													"    });",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "f740aa28-f540-465f-aaa4-47f174f695ea",
+												"exec": [
+													"const baseUrl    = pm.environment.get(\"rockbuzz-post-api-base-uri\");",
+													"const token      = pm.environment.get(\"admin_token\");",
+													"const insRequest = {",
+													"    async: false,",
+													"    method: \"POST\", ",
+													"    url: `${baseUrl}/api/posts`,",
+													"    header: {",
+													"        \"Accept\": \"application/json\",",
+													"        \"Content-Type\": \"application/json\",",
+													"        \"Authorization\": `Bearer ${token}`,",
+													"    },",
+													"    body: {",
+													"        mode: \"raw\",",
+													"        raw: JSON.stringify({",
+													"        \t\"title\": \"New Test Post\",",
+													"        \t\"slug\": \"new-test-post\",",
+													"        \t\"body\": \"This is Test Post.\",",
+													"        \t\"author\": 1,",
+													"        \t\"tags\": [1]",
+													"        })",
+													"    }",
+													"};",
+													"pm.sendRequest(insRequest, (err, res) => {",
+													"    const location = res.headers.get(\"Location\");",
+													"",
+													"    pm.globals.set(\"update-test-location\", location);",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Accept",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"type": "text",
+												"value": "Bearer {{admin_token}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"title\": \"Updated Test Post\",\n\t\"slug\": \"updated-test-post\",\n\t\"body\": \"This is updated Post.\",\n\t\"author\": 2,\n\t\"tags\": [2]\n}"
+										},
+										"url": {
+											"raw": "{{rockbuzz-post-api-base-uri}}{{update-test-location}}",
+											"host": [
+												"{{rockbuzz-post-api-base-uri}}{{update-test-location}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete Post as Admin",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "6b6583ff-2c83-4656-9e39-f0fcffe607dd",
+												"exec": [
+													"pm.test(\"status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "25a7270e-0d8a-42af-8084-c290c6b28a7d",
+												"exec": [
+													"const baseUrl    = pm.environment.get(\"rockbuzz-post-api-base-uri\");",
+													"const token      = pm.environment.get(\"admin_token\");",
+													"const insRequest = {",
+													"    async: false,",
+													"    method: \"POST\", ",
+													"    url: `${baseUrl}/api/posts`,",
+													"    header: {",
+													"        \"Accept\": \"application/json\",",
+													"        \"Content-Type\": \"application/json\",",
+													"        \"Authorization\": `Bearer ${token}`,",
+													"    },",
+													"    body: {",
+													"        mode: \"raw\",",
+													"        raw: JSON.stringify({",
+													"        \t\"title\": \"New Test Post\",",
+													"        \t\"slug\": \"new-test-post\",",
+													"        \t\"body\": \"This is Test Post.\",",
+													"        \t\"author\": 1,",
+													"        \t\"tags\": [1]",
+													"        })",
+													"    }",
+													"};",
+													"pm.sendRequest(insRequest, (err, res) => {",
+													"    const location = res.headers.get(\"Location\");",
+													"",
+													"    pm.globals.set(\"delete-test-location\", location);",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Accept",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "Authorization",
+												"type": "text",
+												"value": "Bearer {{admin_token}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": ""
+										},
+										"url": {
+											"raw": "{{rockbuzz-post-api-base-uri}}{{delete-test-location}}",
+											"host": [
+												"{{rockbuzz-post-api-base-uri}}{{delete-test-location}}"
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"_postman_isSubFolder": true
 						}
 					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"type": "text",
-								"value": "application/json"
-							},
-							{
-								"key": "Authorization",
-								"type": "text",
-								"value": "Bearer {{blog_token}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{rockbuzz-post-api-base-uri}}/tags",
-							"host": [
-								"{{rockbuzz-post-api-base-uri}}"
-							],
-							"path": [
-								"tags"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get all Posts As Blog",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "6b6583ff-2c83-4656-9e39-f0fcffe607dd",
-								"exec": [
-									"const schema = {",
-									"    \"properties\": {",
-									"        \"id\": {",
-									"            \"type\": \"integer\",",
-									"        },",
-									"        \"title\": {",
-									"            \"type\": \"string\",",
-									"        },",
-									"        \"slug\": {",
-									"            \"type\": \"string\",",
-									"        },",
-									"        \"body\": {",
-									"            \"type\": \"string\",",
-									"        },",
-									"        \"author\": {",
-									"            \"type\": \"object\",",
-									"            \"properties\": {",
-									"                \"id\": {",
-									"                    \"type\": \"integer\",",
-									"                },",
-									"                \"name\": {",
-									"                    \"type\": \"string\",",
-									"                },",
-									"            },",
-									"            \"required\": [",
-									"                \"id\", ",
-									"                \"name\",",
-									"            ],",
-									"        },",
-									"        \"tags\": {",
-									"            \"type\": \"array\",",
-									"            \"items\": {",
-									"                \"type\": \"object\",",
-									"                \"properties\": {",
-									"                    \"id\": {",
-									"                        \"type\": \"integer\",",
-									"                    },",
-									"                    \"name\": {",
-									"                        \"type\": \"string\",",
-									"                    },",
-									"                },",
-									"                \"required\": [",
-									"                    \"id\", ",
-									"                    \"name\",",
-									"                ],",
-									"            },",
-									"        },",
-									"    },",
-									"    \"required\": [",
-									"        \"id\", ",
-									"        \"title\",",
-									"        \"slug\",",
-									"        \"body\",",
-									"        \"author\",",
-									"        \"tags\",",
-									"    ],",
-									"};",
-									"",
-									"pm.test(\"status code is 200\", () => {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"body pass schema verification\", () => {",
-									"    pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;",
-									"});",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"type": "text",
-								"value": "application/json"
-							},
-							{
-								"key": "Authorization",
-								"type": "text",
-								"value": "Bearer {{blog_token}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{rockbuzz-post-api-base-uri}}/posts",
-							"host": [
-								"{{rockbuzz-post-api-base-uri}}"
-							],
-							"path": [
-								"posts"
-							]
-						}
-					},
-					"response": []
+					"_postman_isSubFolder": true
 				}
 			]
 		},

@@ -27,13 +27,13 @@ $app->group("/api", function(App $app) use ($container) {
         $app->post("", AuthorRestController::class . ":insert")
             ->setName("authors.insert");
 
-        $app->get("/{id}", AuthorRestController::class . ":findOne")
+        $app->get("/{id:[0-9]+}", AuthorRestController::class . ":findOne")
             ->setName("authors.findOne");
 
-        $app->put("/{id}", AuthorRestController::class . ":update")
+        $app->put("/{id:[0-9]+}", AuthorRestController::class . ":update")
             ->setName("authors.update");
 
-        $app->delete("/{id}", AuthorRestController::class . ":delete")
+        $app->delete("/{id:[0-9]+}", AuthorRestController::class . ":delete")
             ->setName("authors.delete");
     });
 
@@ -44,13 +44,13 @@ $app->group("/api", function(App $app) use ($container) {
         $app->post("", TagRestController::class . ":insert")
             ->setName("tags.insert");
 
-        $app->get("/{id}", TagRestController::class . ":findOne")
+        $app->get("/{id:[0-9]+}", TagRestController::class . ":findOne")
             ->setName("tags.findOne");
 
-        $app->put("/{id}", TagRestController::class . ":update")
+        $app->put("/{id:[0-9]+}", TagRestController::class . ":update")
             ->setName("tags.update");
 
-        $app->delete("/{id}", TagRestController::class . ":delete")
+        $app->delete("/{id:[0-9]+}", TagRestController::class . ":delete")
             ->setName("tags.delete");
     });
 
@@ -66,16 +66,19 @@ $app->group("/api", function(App $app) use ($container) {
             ->add($authorConverter)
             ->add($tagConverter);
 
-        $app->get("/{id}", PostRestController::class . ":findOne")
+        $app->get("/{id:[0-9]+}", PostRestController::class . ":findOne")
             ->setName("posts.findOne");
 
-        $app->put("/{id}", PostRestController::class . ":update")
+        $app->put("/{id:[0-9]+}", PostRestController::class . ":update")
             ->setName("posts.update")
             ->add($authorConverter)
             ->add($tagConverter);
 
-        $app->delete("/{id}", PostRestController::class . ":delete")
+        $app->delete("/{id:[0-9]+}", PostRestController::class . ":delete")
             ->setName("posts.delete");
+
+        $app->get("/published", PostRestController::class . ":findAllPublished")
+            ->setName("posts.findAllPublished");
 
         $app->get("/slug/{slug}", PostRestController::class . ":findOneBySlug")
             ->setName("posts.findOneBySlug");

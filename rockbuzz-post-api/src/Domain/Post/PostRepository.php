@@ -8,6 +8,7 @@
 
 namespace RockBuzz\Post\Domain\Post;
 
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query\QueryException;
 use Monolog\Logger;
@@ -45,6 +46,29 @@ class PostRepository extends Repository {
     public function findAll($arguments = []): array {
         $builder  = $this->getBuilder("post");
         $criteria = $this->createCriteria($builder, $arguments);
+
+        try {
+            return $builder
+                ->distinct()
+                ->innerJoin("post.author", "author")
+                ->leftJoin("post.tags", "tag")
+                ->addCriteria($criteria)
+                ->getQuery()
+                ->getResult();
+        } catch (QueryException $ex) {
+            throw new RepositoryException("Fail building the posts query.", 0, $ex);
+        }
+    }
+
+    /**
+     * @param Argument[] $arguments
+     * @return PostEntity[]
+     */
+    public function findAllPublished($arguments = []): array {
+        $builder  = $this->getBuilder("post");
+        $criteria = $this->createCriteria($builder, $arguments);
+
+        $criteria->andWhere(Criteria::expr()->eq("published", true));
 
         try {
             return $builder

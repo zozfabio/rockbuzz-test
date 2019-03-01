@@ -52,6 +52,13 @@ class PostRestController {
         return $response->withJson($postResources);
     }
 
+    public function findAllPublished(Request $request, Response $response) {
+        $arguments     = $this->getArgumentsFromRequest($request);
+        $posts         = $this->posts->findAllPublished($arguments);
+        $postResources = PostResource::collection($request, $posts);
+        return $response->withJson($postResources);
+    }
+
     public function findOne(Request $request, Response $response, array $args) {
         $post         = $this->posts->findOne($args["id"]);
         $postResource = PostResource::single($request, $post);

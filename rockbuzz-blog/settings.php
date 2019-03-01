@@ -23,7 +23,7 @@ return [
             'scope'                   => [
                 'authors.findAll',
                 'tags.findAll',
-                'posts.findAll',
+                'posts.findAllPublished',
                 'posts.findOneBySlug',
                 'posts.author',
                 'posts.tags',

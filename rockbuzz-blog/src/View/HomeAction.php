@@ -56,27 +56,23 @@ class HomeAction {
         $allAuthors = $this->authors->findAll();
         $allTags    = $this->tags->findAll();
 
-        try {
-            $this->views->render($response, "/home.php", [
-                "router"     => $this->router,
-                "currParams" => $currParams,
+        $this->views->render($response, "/home.php", [
+            "router"     => $this->router,
+            "currParams" => $currParams,
 
-                "filter"            => [
-                    "a" => $this->buildAuthorFilter($currParams, $allAuthors),
-                    "t" => $this->buildTagFilter($currParams, $allTags),
-                ],
-                "filterAuthorRoute" => $this->filterAuthorRoute($currParams),
-                "filterTagRoute"    => $this->filterTagRoute($currParams),
+            "filter"            => [
+                "a" => $this->buildAuthorFilter($currParams, $allAuthors),
+                "t" => $this->buildTagFilter($currParams, $allTags),
+            ],
+            "filterAuthorRoute" => $this->filterAuthorRoute($currParams),
+            "filterTagRoute"    => $this->filterTagRoute($currParams),
 
-                "removeFilterAuthorRoute" => $this->removeFilterAuthorRoute($currParams),
-                "removeFilterTagRoute"    => $this->removeFilterTagRoute($currParams),
+            "removeFilterAuthorRoute" => $this->removeFilterAuthorRoute($currParams),
+            "removeFilterTagRoute"    => $this->removeFilterTagRoute($currParams),
 
-                "authors" => $this->removeAuthorsFiltered($allAuthors, $currParams),
-                "tags"    => $this->removeTagsFiltered($allTags, $currParams),
-                "posts"   => $this->posts->findAll($currParams),
-            ]);
-        } catch (RepositoryException $ex) {
-            $response->write($ex->getMessage());
-        }
+            "authors" => $this->removeAuthorsFiltered($allAuthors, $currParams),
+            "tags"    => $this->removeTagsFiltered($allTags, $currParams),
+            "posts"   => $this->posts->findAllPublished($currParams),
+        ]);
     }
 }

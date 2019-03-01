@@ -36,13 +36,13 @@ class PostRepository {
      * @param array $args
      * @return PostResource[]
      */
-    public function findAll(array $args = []): array {
+    public function findAllPublished(array $args = []): array {
         $query = "";
         if (!empty($args)) {
             $query = "?".http_build_query($args);
         }
 
-        $request = $this->requestFactory->getInstance("GET", "/api/posts".$query);
+        $request = $this->requestFactory->getInstance("GET", "/api/posts/published".$query);
 
         try {
             $response = $this->client->send($request);
