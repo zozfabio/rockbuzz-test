@@ -36,7 +36,7 @@
             <header>
                 <h3><?php echo $post->getTitle() ?></h3>
             </header>
-            <p><?php echo $post->getBody() ?></p>
+            <?php echo $post->getBody() ?>
         </article>
     </section>
 </section>
