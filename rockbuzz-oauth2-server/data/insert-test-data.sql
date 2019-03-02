@@ -17,6 +17,7 @@ insert into scope(name) values ('posts.update');
 insert into scope(name) values ('posts.delete');
 insert into scope(name) values ('posts.findAllPublished');
 insert into scope(name) values ('posts.findOneBySlug');
+insert into scope(name) values ('posts.published');
 insert into scope(name) values ('posts.author');
 insert into scope(name) values ('posts.tags');
 
@@ -41,8 +42,9 @@ insert into client_scopes(client_id, scope_id) values ((select id from client wh
 insert into client_scopes(client_id, scope_id) values ((select id from client where name = 'rockbuzz-admin'), (select id from scope where name = 'tags.delete'));
 insert into client_scopes(client_id, scope_id) values ((select id from client where name = 'rockbuzz-admin'), (select id from scope where name = 'posts.findAll'));
 insert into client_scopes(client_id, scope_id) values ((select id from client where name = 'rockbuzz-admin'), (select id from scope where name = 'posts.findOne'));
-insert into client_scopes(client_id, scope_id) values ((select id from client where name = 'rockbuzz-admin'), (select id from scope where name = 'posts.author'));
-insert into client_scopes(client_id, scope_id) values ((select id from client where name = 'rockbuzz-admin'), (select id from scope where name = 'posts.tags'));
 insert into client_scopes(client_id, scope_id) values ((select id from client where name = 'rockbuzz-admin'), (select id from scope where name = 'posts.insert'));
 insert into client_scopes(client_id, scope_id) values ((select id from client where name = 'rockbuzz-admin'), (select id from scope where name = 'posts.update'));
 insert into client_scopes(client_id, scope_id) values ((select id from client where name = 'rockbuzz-admin'), (select id from scope where name = 'posts.delete'));
+insert into client_scopes(client_id, scope_id) values ((select id from client where name = 'rockbuzz-admin'), (select id from scope where name = 'posts.published'));
+insert into client_scopes(client_id, scope_id) values ((select id from client where name = 'rockbuzz-admin'), (select id from scope where name = 'posts.author'));
+insert into client_scopes(client_id, scope_id) values ((select id from client where name = 'rockbuzz-admin'), (select id from scope where name = 'posts.tags'));
