@@ -39,6 +39,17 @@ services:
       - "./rockbuzz-blog:/usr/src/app"
     ports:
       - "8002:8000"
+  admin-app:
+    build:
+      context: rockbuzz-admin
+      dockerfile: app.docker
+    depends_on:
+      - oauth2-server-app
+      - post-api-app
+    volumes:
+      - "./rockbuzz-admin:/usr/src/app"
+    ports:
+      - "8003:8000"
   test:
     image: postman/newman:4.4.0-alpine
     entrypoint: newman run -e test.postman_environment.json RockBuzz.postman_collection.json
@@ -46,6 +57,7 @@ services:
       - oauth2-server-app
       - post-api-app
       - blog-app
+      - admin-app
     volumes:
       - "./rockbuzz-tests:/etc/newman"
 

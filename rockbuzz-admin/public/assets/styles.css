@@ -1,0 +1,113 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+body {
+    padding: 20px;
+    font-family: Arial, serif;
+    background-color: #f1f1f1;
+}
+
+/* page */
+header.page-head {
+    padding: 30px;
+    margin-bottom: 20px;
+    font-size: 40px;
+    text-align: center;
+    background: #ffffff;
+}
+footer.page-foot {
+    padding: 20px;
+    text-align: center;
+    background: #ddd;
+}
+
+/* nav */
+nav {
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: white;
+}
+
+/* page cards */
+section.row {
+    padding-right: 20px;
+    display: grid;
+    grid-gap: 20px;
+    grid-template-rows: auto;
+    grid-template-columns: 50% 50%;
+}
+section.card {
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: #ffffff;
+}
+section header {
+    margin-bottom: 20px;
+}
+
+/* table */
+table {
+    width: 100%;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    border: 1px solid #ddd;
+    padding: 5px 10px;
+}
+
+/* forms */
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+input[type="text"],
+input[type="password"],
+select,
+textarea {
+    width: 100%;
+    padding: 5px 10px;
+    box-sizing: border-box;
+}
+select {
+    background-color: #ffffff;
+}
+textarea {
+    resize: none;
+}
+.form-control {
+    margin-bottom: 20px;
+}
+
+/* buttons and links */
+button {
+    border: 1px solid #ddd;
+    padding: 3px 10px;
+    background-color: #f1f1f1;
+    font-size: 13px;
+}
+a {
+    text-decoration: none;
+}
+a.button {
+    border: 1px solid #ddd;
+    padding: 3px 10px;
+    background-color: #f1f1f1;
+    cursor: default;
+    color: buttontext;
+    font-size: 13px;
+}
+
+/* alerts */
+.alert {
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: #ffffff;
+}
+section.card .alert {
+    background-color: #f1f1f1;
+}
