@@ -73,7 +73,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"grant_type\": \"password\",\n\t\"client_id\": \"rockbuzz-admin\",\n\t\"client_secret\": \"rockbuzzadminsecret\",\n\t\"scope\": \"authors.findAll authors.findOne authors.insert authors.update authors.delete tags.findAll tags.findOne tags.insert tags.update tags.delete posts.findAll posts.findOne posts.author posts.tags posts.insert posts.update posts.delete\",\n\t\"username\": \"user@test.com\",\n\t\"password\": \"userpass\"\n}"
+							"raw": "{\n\t\"grant_type\": \"password\",\n\t\"client_id\": \"rockbuzz-admin\",\n\t\"client_secret\": \"rockbuzzadminsecret\",\n\t\"scope\": \"authors.findAll authors.findOne authors.insert authors.update authors.delete tags.findAll tags.findOne tags.insert tags.update tags.delete posts.findAll posts.findOne posts.insert posts.update posts.delete posts.author posts.tags posts.published\",\n\t\"username\": \"user@test.com\",\n\t\"password\": \"userpass\"\n}"
 						},
 						"url": {
 							"raw": "{{rockbuzz-oauth2-base-uri}}/token",
@@ -1983,7 +1983,7 @@
 									"",
 									"tests[\"expect post title to be 'Tenacios D Biography'\"] = $postTitle.text() === \"Tenacios D Biography\";",
 									"tests[\"expect post body to starts with 'Rightfully hailed as \\\"the greatest band on Earth,\\\"'\"] = $postBody.text().indexOf(\"Rightfully hailed as \\\"the greatest band on Earth,\\\"\") === 0;",
-									"tests[\"expect post body to ends with 'a major-label album deal.'\"] = $postBody.text().indexOf(\"a major-label album deal.\") === $postBody.text().length - 25;",
+									"tests[\"expect post body to ends with 'an unlikely success story.'\"] = $postBody.text().indexOf(\"an unlikely success story.\") === $postBody.text().length - 26;",
 									"tests[\"expect post read more link to be '/tenacios-d-biography'\"] = $postLink.attr(\"href\") === \"/tenacios-d-biography\";"
 								],
 								"type": "text/javascript"
@@ -2086,7 +2086,7 @@
 									"const $post = $($posts.get(0));",
 									"",
 									"tests[\"expect post to have title\"] = $post.find(\"header h3\").length === 1;",
-									"tests[\"expect post to have body\"] = $post.find(\"p\").length === 1;",
+									"tests[\"expect post to have body\"] = $post.children(\"p\").length >= 1;",
 									"",
 									"const $postTitle = $post.find(\"header h3\");",
 									"const $postBody  = $post.find(\"p\");",
