@@ -8,36 +8,36 @@
 
 namespace RockBuzz\Post\View\Post;
 
+use JsonSerializable;
 use RockBuzz\Post\Domain\Post\PostEntity;
 use RockBuzz\Post\View\Author\AuthorResource;
 use RockBuzz\Post\View\Tag\TagResource;
 use Slim\Http\Request;
 
-class PostResource {
+class PostResource implements JsonSerializable {
 
-    /** @var integer */
-    public $id;
+    private $id;
 
-    /** @var string */
-    public $title;
+    private $title;
 
-    /** @var string */
-    public $slug;
+    private $slug;
 
-    /** @var string */
-    public $body;
+    private $body;
 
-    public $author;
+    private $published;
 
-    public $tags;
+    private $author;
 
-    private function __construct(PostEntity $post, ?AuthorResource $author, ?array $tags) {
-        $this->id     = $post->getId();
-        $this->title  = $post->getTitle();
-        $this->slug   = $post->getSlug();
-        $this->body   = $post->getBody();
-        $this->author = $author;
-        $this->tags   = $tags;
+    private $tags;
+
+    private function __construct(PostEntity $post, ?bool $published, ?AuthorResource $author, ?array $tags) {
+        $this->id        = $post->getId();
+        $this->title     = $post->getTitle();
+        $this->slug      = $post->getSlug();
+        $this->body      = $post->getBody();
+        $this->published = $published;
+        $this->author    = $author;
+        $this->tags      = $tags;
     }
 
     /**
@@ -59,7 +59,12 @@ class PostResource {
             $tags = TagResource::collection($request, $post->getTags());
         }
 
-        return new self($post, $author, $tags);
+        $published = null;
+        if (array_search("posts.published", $scopes)) {
+            $published = $post->isPublished();
+        }
+
+        return new self($post, $published, $author, $tags);
     }
 
     /**
@@ -71,5 +76,26 @@ class PostResource {
         return array_map(function(PostEntity $post) use ($request) {
             return self::single($request, $post);
         }, $posts);
+    }
+
+    public function jsonSerialize() {
+        $json = [
+            "id" => $this->id,
+            "title" => $this->title,
+            "slug" => $this->slug,
+            "body" => $this->body,
+        ];
+
+        if (!is_null($this->published)) {
+            $json["published"] = $this->published;
+        }
+        if (!is_null($this->author)) {
+            $json["author"] = $this->author;
+        }
+        if (!is_null($this->tags)) {
+            $json["tags"] = $this->tags;
+        }
+
+        return $json;
     }
 }

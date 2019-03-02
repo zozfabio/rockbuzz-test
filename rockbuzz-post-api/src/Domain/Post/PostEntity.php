@@ -94,7 +94,7 @@ class PostEntity implements Identifiable {
         Preconditions::nonEmptyKey($values, "body", "Body is required");
         Preconditions::nonEmptyKey($values, "author", "Author is required");
 
-        $published = $values["published"] ?: false;
+        $published = isset($values["published"]) ? $values["published"] : false;
         $tags      = $values["tags"] ?: [];
 
         return new self(null, $values["title"], $values["slug"], $values["body"], $published, $values["author"], $tags);
@@ -104,7 +104,7 @@ class PostEntity implements Identifiable {
         $title     = $values["title"] ?: $this->title;
         $slug      = $values["slug"] ?: $this->slug;
         $body      = $values["body"] ?: $this->body;
-        $published = $values["published"] ?: $this->published;
+        $published = isset($values["published"]) ? $values["published"] : $this->published;
         $author    = $values["author"] ?: $this->author;
         $tags      = $values["tags"] ?: $this->tags;
 
