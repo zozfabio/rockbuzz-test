@@ -48,7 +48,7 @@
             <header>
                 <h3><?php echo $post->getTitle() ?></h3>
             </header>
-            <p><?php echo explode("<br/>", $post->getBody())[0] ?></p>
+            <p><?php echo $post->getSummary() ?></p>
             <footer>
                 <a href="<?php echo $router->pathFor("posts.findOneBySlug", ["slug" => $post->getSlug()]) ?>">Read
                     More</a>

@@ -102,4 +102,20 @@ class PostResource {
     public function getTags() {
         return $this->tags;
     }
+
+    /**
+     * @return string
+     */
+    public function getSummary() {
+        $plainTextBody = strip_tags($this->body);
+        $paragraphs = explode("\n", $plainTextBody);
+        if (sizeof($paragraphs) > 1) {
+            return $paragraphs[0];
+        }
+        $parts = explode(".", $plainTextBody);
+        if (sizeof($parts) > 0) {
+            return $parts[0] . ".";
+        }
+        return $plainTextBody;
+    }
 }
